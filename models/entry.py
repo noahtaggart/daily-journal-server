@@ -5,3 +5,4 @@ class Entry():
         self.date = date
         self.userId = userId
         self.moodId = moodId
+        self.mood = None
