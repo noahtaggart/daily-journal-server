@@ -56,3 +56,22 @@ SELECT
 FROM Entries e
 Join Moods m
     ON m.id = e.moodId
+
+SELECT
+    *
+FROM Entrytags et
+JOIN Tags t
+    on t.id= et.tag_id
+LEFT JOIN Entries e
+    on e.id = 7
+WHERE et.entry_id = e.id
+GROUP BY t.id
+
+SELECT *
+FROM Entries e
+LEFT JOIN Entrytags et 
+    on et.entry_id = e.id
+LEFT JOIN Tags t 
+    on t.id = et.tag_id
+WHERE et.entry_id= 1
+ 
