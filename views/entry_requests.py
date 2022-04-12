@@ -1,4 +1,4 @@
-from models import Entry, Mood
+from models import Entry, Mood, Tag
 import sqlite3
 import json
 
@@ -25,11 +25,36 @@ def get_all_entries():
         dataset = db_cursor.fetchall()
         
         for row in dataset:
+            
+            rowId = row['id']
+            
+            db_cursor.execute("""
+            SELECT *
+            FROM Entries e
+            LEFT JOIN Entrytags et 
+                on et.entry_id = e.id
+            LEFT JOIN Tags t 
+                on t.id = et.tag_id
+            WHERE et.entry_id = ?
+            GROUP BY t.id
+            """, (rowId, ))
+            
+            data = db_cursor.fetchall()
+            
+            tags = []
+            
+            for current_tag in data:
+                tag = Tag(current_tag['id'], current_tag['name'])
+                
+                tags.append(tag.__dict__)
+
             entry = Entry(row['id'], row['concept'], row['entry'], row['date'], row['moodId'])
             
             mood = Mood(row['moodId'], row['label'])
             
             entry.mood = mood.__dict__
+            
+            entry.tags = tags
             
             
             entries.append(entry.__dict__)
