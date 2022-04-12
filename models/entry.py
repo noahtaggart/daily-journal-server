@@ -1,8 +1,9 @@
 class Entry():
-    def __init__(self, id, journalEntry, date, userId, moodId):
+    def __init__(self, id, concept, entry, date, moodId):
         self.id = id
-        self.journalEntry = journalEntry
+        self.concept = concept
+        self.entry = entry
         self.date = date
-        self.userId = userId
         self.moodId = moodId
         self.mood = None
+        self.tags = None

@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_entries, get_single_entry, delete_entry, create_entry
+from views import get_all_entries, get_single_entry, delete_entry, create_entry, get_all_moods, get_single_mood, search_all_entries, update_entry, get_all_tags, get_single_tag
 
 import json
 
@@ -90,6 +90,25 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"        
+            elif resource == "moods":
+                if id is not None:
+                    response = f"{get_single_mood(id)}"
+                else:
+                    response = f"{get_all_moods()}"  
+            elif resource == "tags":
+                if id is not None:
+                    response = f"{get_single_tag(id)}"
+                else:
+                    response = f"{get_all_tags()}"  
+                    
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+
+            # Is the resource `customers` and was there a
+            # query parameter that specified the customer
+            # email as a filtering value?
+            if key == "q" and resource =="entries":
+                response = search_all_entries(value)      
                 
         self.wfile.write(response.encode())
         
@@ -107,26 +126,26 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Encode the new entry and send in response
         self.wfile.write("".encode())
         
-    # def do_PUT(self):
-    #     content_len = int(self.headers.get('content-length', 0))
-    #     post_body = self.rfile.read(content_len)
-    #     post_body = json.loads(post_body)
+    def do_PUT(self):
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
 
-    #     # Parse the URL
-    #     (resource, id) = self.parse_url(self.path)
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
 
-    #     success = False
+        success = False
 
-    #     if resource == "entries":
-    #         success = update_entry(id, post_body)
-    #     # rest of the elif's
+        if resource == "entries":
+            success = update_entry(id, post_body)
+        # rest of the elif's
 
-    #     if success:
-    #         self._set_headers(204)
-    #     else:
-    #         self._set_headers(404)
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
 
-    #     self.wfile.write("".encode())
+        self.wfile.write("".encode())
         
     def do_POST(self):
         self._set_headers(201)
@@ -150,6 +169,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Encode the new entry and send in response
         self.wfile.write(f"{new_entry}".encode())
+        
+    
 
 
 
