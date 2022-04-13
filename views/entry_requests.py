@@ -169,6 +169,18 @@ def update_entry(id, new_entry):
         
         rows_affected = db_cursor.rowcount
         
+        entryTags = []
+        
+        for tag in new_entry['tags']:
+            db_cursor.execute("""
+            INSERT INTO Entrytags
+                (entry_id, tag_id)
+            VALUES
+                (?, ?);
+            """, (id, tag))
+            
+            entryTags.append(tag)
+        
     if rows_affected == 0:
         return False
     else:
